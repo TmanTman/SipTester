@@ -26,7 +26,7 @@ public class SipUtilities {
 	public Ringtone ringTone = null;
 	private DailActivity dailAct;
 	
-	public SipUtilities (final DailActivity cntx, String pUsername, String pPassword){
+	public SipUtilities (final DailActivity cntx, String pUsername, String pServerIp, String pPassword){
 		
 		Log.d(TAG, "Starting SipUtilities constructor");
 		
@@ -52,15 +52,15 @@ public class SipUtilities {
 			
 			
 				//Phone 1: User Account
-				builder = new SipProfile.Builder(pUsername, "getonsip.com");
+				builder = new SipProfile.Builder(pUsername, pServerIp);
 				} catch (java.text.ParseException e) {
 					Log.d(TAG, "Error: " + e.getMessage());
 					e.printStackTrace();
 				}
 				//Set the SIP password
 				builder.setPassword(pPassword);
-				builder.setAuthUserName("getonsip_" + pUsername);
-				builder.setOutboundProxy("sip.onsip.com");
+				//builder.setAuthUserName("getonsip_" + pUsername);
+				//builder.setOutboundProxy("sip.onsip.com");
 				builder.setPort(5060);
 				builder.setProtocol("UDP");
 				this.mSipProfile=builder.build();

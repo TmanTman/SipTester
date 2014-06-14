@@ -22,21 +22,39 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView1"
         android:inputType="text"
-        android:text="tdragon2"
+        android:text="piet"
         android:ems="10" />
 
     <requestFocus
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
+    
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textView3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/editText1"
         android:layout_marginTop="30dp"
-        android:text="GetOnSip provided password" />
+        android:text="Server IP"  />
+
+    <EditText
+        android:id="@+id/editText3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView3"
+        android:text="10.110.28.228"
+        android:ems="10" />
+    
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/editText3"
+        android:layout_marginTop="30dp"
+        android:text="SPCE password" />
     
     <EditText
         android:id="@+id/editText2"
@@ -45,7 +63,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/textView2"
         android:inputType="text"
-        android:text="NZfKo9AQjAHtEQyw"
+        android:text="sippassword"
         android:ems="10" />
 
     <Button
@@ -57,5 +75,6 @@
         android:layout_alignParentRight="true"
         android:text="Save and Return"
         android:onClick="sipDetailsSave" />
+
 
 </RelativeLayout>

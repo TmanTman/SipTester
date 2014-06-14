@@ -12,6 +12,11 @@ import android.widget.Toast;
 
 public class AccountRegActivity extends ActionBarActivity{
 	
+	//When this activity starts, loadFieldValues attempt to retreive the values from 
+	//sharedpreferences and fill in the default values. 
+	//When the "Save and Return" button is hit, the values as in the EditText fields
+	//are saved to the sharedpreferences file
+	
 	//SharedPreferences file
 	private static final String PREFS_NAME = "MyPrefsFile";
 	
@@ -19,9 +24,10 @@ public class AccountRegActivity extends ActionBarActivity{
 	SharedPreferences settings;
 	SharedPreferences.Editor editor;
 	
-	//Buttons
+	//EditText windows
 	EditText editUsername;
 	EditText editPassword;
+	EditText editServerIp;
 	
 	 @Override
 	    protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +39,7 @@ public class AccountRegActivity extends ActionBarActivity{
 			//Load the buttons on the screen
 			editUsername = (EditText)findViewById(R.id.editText1);
 			editPassword = (EditText)findViewById(R.id.editText2);
+			editServerIp = (EditText)findViewById(R.id.editText3);
 	        loadFieldValues();
 	    }
 	 
@@ -65,6 +72,12 @@ public class AccountRegActivity extends ActionBarActivity{
 		 {
 			 editor.putString("username", username);
 		 }
+		//Get ServerIP and save to Prefs
+		 String serverip = editUsername.getText().toString();
+		 if (serverip != "")
+		 {
+			 editor.putString("serverip", serverip);
+		 }
 		//Get Password and save to Prefs
 		 String password = editPassword.getText().toString();
 		 if (username != "")
@@ -81,16 +94,17 @@ public class AccountRegActivity extends ActionBarActivity{
 	 
 	 private void loadFieldValues() {
 
-		 //Create variables for username and password
-		 String username;
-		 String password;
 		 //Restore the previous values to the text boxes if they exist
 		 if (settings.contains("username")) {
-		 	username = settings.getString("username", "");
+			 String username = settings.getString("username", "");
 		 	editUsername.setText(username);
 		 }
+		 if (settings.contains("serverip")) {
+			 String serverip = settings.getString("serverip", "");
+			 editServerIp.setText(serverip);
+		 }
 		 if (settings.contains("password")) {
-			password = settings.getString("password", "");
+			String password = settings.getString("password", "");
 			editPassword.setText(password);
 		 }
 		 

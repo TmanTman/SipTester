@@ -49,6 +49,7 @@ public class DailActivity extends ActionBarActivity {
 	//SIP account details
 	private String username;
 	private String password;
+	private String serverip;
 	
 	//Class handle to TextView for SIP call status
 	TextView tView;
@@ -70,12 +71,14 @@ public class DailActivity extends ActionBarActivity {
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		//Get username from Prefs
 		username = settings.getString("username", "");
+		//Get server address from Prefs
+		serverip = settings.getString("serverip", "");
 		//Get password from Prefs
 		password = settings.getString("password", "");	
 		//Register SIP Service
 		if (username != "" && password != "")
 		{
-			sipUtil = new SipUtilities(this, username, password);
+			sipUtil = new SipUtilities(this, username, serverip, password);
 		}
 	}
 	 

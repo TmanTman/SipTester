@@ -24,10 +24,6 @@
         android:inputType="text"
         android:text="piet"
         android:ems="10" />
-
-    <requestFocus
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
     
     <TextView
         android:id="@+id/textView3"

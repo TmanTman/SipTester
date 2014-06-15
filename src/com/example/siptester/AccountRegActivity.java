@@ -73,7 +73,7 @@ public class AccountRegActivity extends ActionBarActivity{
 			 editor.putString("username", username);
 		 }
 		//Get ServerIP and save to Prefs
-		 String serverip = editUsername.getText().toString();
+		 String serverip = editServerIp.getText().toString();
 		 if (serverip != "")
 		 {
 			 editor.putString("serverip", serverip);

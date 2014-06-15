@@ -9,6 +9,7 @@ import android.net.sip.SipAudioCall;
 import android.net.sip.SipException;
 import android.net.sip.SipManager;
 import android.net.sip.SipProfile;
+import android.net.sip.SipSession;
 import android.os.Message;
 import android.util.Log;
 
@@ -47,6 +48,8 @@ public class SipUtilities {
 		if (mSipManager == null) {
 			this.mSipManager = SipManager.newInstance(cntx);
 			SipProfile.Builder builder = null;
+			Log.d(TAG, "Attempting to build with: ");
+			Log.d(TAG, "Username: ." + pUsername + ". Password: ." + pPassword + ". ServerIP: ." + pServerIp + ".");
 			try {
 				//Set the SIP username and serverdomain
 			
@@ -59,8 +62,8 @@ public class SipUtilities {
 				}
 				//Set the SIP password
 				builder.setPassword(pPassword);
-				//builder.setAuthUserName("getonsip_" + pUsername);
-				//builder.setOutboundProxy("sip.onsip.com");
+				//builder.setAuthUserName("piet");
+				//builder.setOutboundProxy("10.110.28.228");
 				builder.setPort(5060);
 				builder.setProtocol("UDP");
 				this.mSipProfile=builder.build();
@@ -179,6 +182,7 @@ public class SipUtilities {
     	@Override
         public void onCallEnded(SipAudioCall call) {
             Log.d(TAG, "onCallEnded Listener");
+            Log.d(TAG, "Sip State: " + SipSession.State.toString(SipSession.getState()));
             dailAct.sendMessage("Dail");
         }
     	

@@ -76,7 +76,7 @@ public class DailActivity extends ActionBarActivity {
 		//Get password from Prefs
 		password = settings.getString("password", "");	
 		//Register SIP Service
-		if (username != "" && password != "")
+		if (username != "" && password != "" && serverip != "")
 		{
 			sipUtil = new SipUtilities(this, username, serverip, password);
 		}

@@ -21,22 +21,6 @@ import com.example.sip.SipUtilities;
 
 public class DailActivity extends ActionBarActivity {
 	
-	//STATES
-	//S1 = Registering with SIP Server
-	//S2 = SIP Ready
-	//S3 = Registration failed
-	public static final int S1 = 11;
-	public static final int S2 = 12;
-	public static final int S3 = 13;
-	//C1 = In onCallEstablished, make "End Call" button
-	//C2 = In onCallEnded, make "Dail" button
-	//C3 - In onReceive, make "Answer" button
-	//C4 = After pressing "Dail", display "Connecting"
-	public static final int C1 = 21; 
-	public static final int C2 = 22;
-	public static final int C3 = 23; 
-	public static final int C4 = 24;
-
 	//For Debugging purposes
 	private String TAG = "DailActivity";
 	
@@ -189,11 +173,5 @@ public class DailActivity extends ActionBarActivity {
     	Intent intent = new Intent(DailActivity.this, AccountRegActivity.class);
 		startActivity(intent);
     }
-    
-    public void sendMessage(String textToPrint) {
-    	Message mes = this.mHandler.obtainMessage();
-		mes.obj = textToPrint;
-		this.mHandler.sendMessage(mes);
-    } 
 
 }

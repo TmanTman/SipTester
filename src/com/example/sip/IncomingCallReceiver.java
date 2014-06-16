@@ -60,37 +60,20 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 			//Creates a listener object that is attached to the SipAudioCall incomingCall object
 //			Why does both the listener and the call object call answerCall?
 			//Does this answerCall simply acknowledge the ringing?
-			Log.d(TAG, "Create listener object");
-			SipAudioCall.Listener listener = new SipAudioCall.Listener() {
-				@Override
-				public void onRinging(SipAudioCall call, SipProfile caller) {
-					try {
-						Log.d(TAG, "listener answers call");
-						call.answerCall(5000);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-				
-				@Override
-				public void onCallEnded(SipAudioCall call){
-					
-				}
-			};
 			
 			//Change the utilityButton to say "Answer"
 			dailAct.sendMessage("Answer");
-
-			Log.d(TAG, "Provide listener to mSipManager for takeAudioCall");
+			Log.d(TAG, "Create listener object");
+			SipAudioCall.Listener listener = dailAct.sipUtil.listener;
+			Log.d(TAG, "Provide listener to mSipManager");
 			//Here you register the listener declared above to answer when ringing
-			//THIS LISTENER IS NEVER REGISTERED. ANDROID CODE DOES NOT WORK
-			incomingCall = dailAct.sipUtil.mSipManager.takeAudioCall(intent, listener);
-			//Here you answer that same call again (?)
-			Log.d(TAG, "IncomingCallReceiver answers call");
-			
+			incomingCall = dailAct.sipUtil.mSipManager.takeAudioCall(intent, listener);	
+			//Attach to SipSession
+			incomingCall.attachCall(dailAct.sipUtil.mSipSession, "IncomingCall");
 			//Makes the phone ring
 			dailAct.sipUtil.ringTone.play();
 			//Gives the call to sipUtil so that it can be answered from there
+			Log.d(TAG, "IncomingCallReceiver provides call to sipUtil.call");	
 			dailAct.sipUtil.call = incomingCall;
 			
 

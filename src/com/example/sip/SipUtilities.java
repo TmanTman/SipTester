@@ -10,6 +10,7 @@ import android.net.sip.SipException;
 import android.net.sip.SipManager;
 import android.net.sip.SipProfile;
 import android.net.sip.SipSession;
+import android.net.sip.SipSession.Listener;
 import android.os.Message;
 import android.util.Log;
 
@@ -19,6 +20,7 @@ public class SipUtilities {
 	
 	public SipManager mSipManager = null;
 	private SipProfile mSipProfile;
+	public SipSession mSipSession;
 	private final String TAG = "SipMethods";
 	public SipAudioCall.Listener listener;
 	public IncomingCallReceiver callReceiver;
@@ -26,6 +28,17 @@ public class SipUtilities {
 	public RingtoneManager ringMan = null;
 	public Ringtone ringTone = null;
 	private DailActivity dailAct;
+	
+	//STATES
+	//States related to SIP
+	public static final int SIP_REGISTERING = 11;
+	public static final int SIP_READY = 12;
+	public static final int SIP_REGISTRATION_FAILED = 13;
+	//States related to calls
+	public static final int CALL_CONNECTED = 21; 
+	public static final int IDLE = 22;
+	public static final int RINGING_INCOMING = 23; 
+	public static final int RINGING_OUTGOING = 24;
 	
 	public SipUtilities (final DailActivity cntx, String pUsername, String pServerIp, String pPassword){
 		
@@ -79,7 +92,10 @@ public class SipUtilities {
         //This registers a listener for when the registration of the SIP service fails or succeeds
         try {
             mSipManager.open(mSipProfile, pendingIntent, null);        
-            mSipManager.setRegistrationListener(mSipProfile.getUriString(), new SipRegistrationListener(cntx));	
+            mSipManager.setRegistrationListener(mSipProfile.getUriString(), new SipRegistrationListener(cntx));
+            //All methods implemented in SipAudioCall Listener. SipSessionListener is 
+            //created on top of SipSession.Listener but is empty 
+            mSipSession = mSipManager.createSipSession(mSipProfile, new SipSessionListener());
         } catch (SipException e) {      
             e.printStackTrace();
         }
@@ -97,6 +113,12 @@ public class SipUtilities {
 			call = mSipManager.makeAudioCall(mSipProfile.getUriString(), pContact, listener, 30);
 		} catch (Exception e){
 			Log.d(TAG, "Error: " + e.toString());
+		}
+		try {
+			call.attachCall(mSipSession, "SipAudioCallAttached");
+			Log.d(TAG, "Attached call to SipSession");
+		} catch (SipException e){
+			Log.d(TAG, "Error during call attach: " + e.toString());
 		}
 	}
 	
@@ -181,50 +203,43 @@ public class SipUtilities {
     	
     	@Override
         public void onCallEnded(SipAudioCall call) {
-            Log.d(TAG, "onCallEnded Listener");
-            Log.d(TAG, "Sip State: " + SipSession.State.toString(SipSession.getState()));
+            Log.d(TAG, "onCallEnded Listener. State: " + SipSession.State.toString(mSipSession.getState()));
             dailAct.sendMessage("Dail");
         }
     	
     	@Override
     	public void onReadyToCall (SipAudioCall call) {
-    		Log.d(TAG, "onReadyToCall Listener");
+    		Log.d(TAG, "onReadyToCall Listener. State: " + SipSession.State.toString(mSipSession.getState()));
     	}
     	
     	@Override
     	public void onRinging (SipAudioCall call, SipProfile caller){
-    		Log.d(TAG, "onRinging Listener");
-    		try {
-				Log.d(TAG, "listener answers call");
-				call.answerCall(5000);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+    		Log.d(TAG, "onRinging Listener. State: " + SipSession.State.toString(mSipSession.getState()));
     	}
     	
     	@Override
     	public void onCalling (SipAudioCall call) {
-    		Log.d(TAG, "onCalling Listener");
+    		Log.d(TAG, "onCalling Listener. State: " + SipSession.State.toString(mSipSession.getState()));
     	}
     	
     	@Override
     	public void onCallBusy (SipAudioCall call){
-    		Log.d(TAG, "onCallBusy Listener");
+    		Log.d(TAG, "onCallBusy Listener. State: " + SipSession.State.toString(mSipSession.getState()));
     	}
     	
     	@Override
     	public void onError (SipAudioCall call, int errorCode, String errorMessage){
-    		Log.d(TAG, "onError Listener: " + errorMessage);
+    		Log.d(TAG, "onError Listener: " + errorMessage + " State: " + SipSession.State.toString(mSipSession.getState()));
     	}
     	
     	@Override
     	public void onRingingBack (SipAudioCall call){
-    		Log.d(TAG, "onRingingBack listener");
+    		Log.d(TAG, "onRingingBack listener. State: " + SipSession.State.toString(mSipSession.getState()));
     	}
     	
     	@Override
     	public void onChanged (SipAudioCall call){
-    		Log.d(TAG, "onChanged Listener");
+    		Log.d(TAG, "onChanged Listener. State: " + SipSession.State.toString(mSipSession.getState()));
     	}
     	
     }

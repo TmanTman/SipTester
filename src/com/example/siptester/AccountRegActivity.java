@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,8 @@ public class AccountRegActivity extends ActionBarActivity{
 	//sharedpreferences and fill in the default values. 
 	//When the "Save and Return" button is hit, the values as in the EditText fields
 	//are saved to the sharedpreferences file
+	
+	private final String TAG = "AccountRegActivity";
 	
 	//SharedPreferences file
 	private static final String PREFS_NAME = "MyPrefsFile";
@@ -87,6 +90,7 @@ public class AccountRegActivity extends ActionBarActivity{
 		 if (!editor.commit()){
 				Toast.makeText(this, "Error saving account details", Toast.LENGTH_LONG).show();
 			}
+		 Log.d(TAG, "Saved field values, returning");
 		 //Close this Activity and return to Dial Screens
 		 Intent intent = new Intent(AccountRegActivity.this, DailActivity.class);
 		 startActivity(intent);

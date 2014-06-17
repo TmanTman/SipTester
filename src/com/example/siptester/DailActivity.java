@@ -18,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sip.SipUtilities;
+import com.example.sip.StateCall;
+import com.example.sip.StateSip;
 
 public class DailActivity extends ActionBarActivity {
 	
@@ -36,15 +38,19 @@ public class DailActivity extends ActionBarActivity {
 	private String serverip;
 	
 	//Class handle to TextView for SIP call status
-	TextView tView;
+	TextView tViewSipState;
+	TextView tViewCallState;
 	Button utilityButton;
+	Button declineButton;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dail);
-        tView = (TextView)this.findViewById(R.id.textView1);
+        tViewSipState = (TextView)this.findViewById(R.id.textView1);
+        tViewCallState = (TextView)this.findViewById(R.id.textView4);
         utilityButton = (Button)this.findViewById(R.id.button1);
+        declineButton = (Button)this.findViewById(R.id.button3);
     }
     
 	 @Override
@@ -122,21 +128,65 @@ public class DailActivity extends ActionBarActivity {
   	
     	@Override 
     	public void handleMessage(Message inputMessage){
-    		int state = -2; 
+    		Log.d(TAG, "inputMessage what value: " + inputMessage.what);
+    		int stateCode = -2; 
     		if (inputMessage.what != 0) {
-    			state = (int) inputMessage.what;
-    			Log.d(TAG, "Received state: " + state);
+    			stateCode = (int) inputMessage.what;
+    			Log.d(TAG, "Received state: " + stateCode);
     		}
-    		String mes = (String) inputMessage.obj;
-    		Log.d(TAG, "Message received in handle: " + mes);
-    		//Messages "Answer", "End Call" and "Dail" should be applied to utilButton
-    		//The rest are SIP registration related and should be applied to tView
-    		if (mes != null) {
-	    		if (mes.equals("Answer") || mes.equals("Dail") || mes.equals("End Call")) {
-	    			utilityButton.setText(mes);
-	    		} else {
-	    			tView.setText(mes);	
+    		//Switch statement for SIP Registration status
+    		if (stateCode < 20){
+	    		switch (stateCode) {
+	    		case SipUtilities.SIP_REGISTERING:
+	    			Log.d(TAG, "Handler SipUtilities.SIP_REGISTERING");
+	    			tViewSipState.setText("Registering SIP account...");
+	    			sipUtil.stateSip = StateSip.SIP_REGISTERING;
+	    			break;
+	    		case SipUtilities.SIP_READY:
+	    			Log.d(TAG, "Handler SipUtilities.SIP_READY");
+	    			tViewSipState.setText("SIP Ready");
+	    			sipUtil.stateSip = StateSip.SIP_READY;
+	    			break;
+	    		case SipUtilities.SIP_REGISTRATION_FAILED:
+	    			Log.d(TAG, "Handler SipUtilities.SIP_REG_FAILED");
+	    			tViewSipState.setText("SIP Failed");
+	    			sipUtil.stateSip = StateSip.SIP_REGISTRARION_FAILED;
+	    		default:
+	    			Log.d(TAG, "Reached default statement");
+	    			break;
 	    		}
+    		} else if (stateCode < 30) {
+    			switch (stateCode){
+    			case SipUtilities.IDLE:
+    				Log.d(TAG, "Handler SipUtilities.IDLE");
+    				tViewCallState.setText("Ready to call");
+    				utilityButton.setText("Dail");
+    				declineButton.setVisibility(View.INVISIBLE);
+    				sipUtil.stateCall = StateCall.IDLE;
+    				break;
+    			case SipUtilities.CALL_CONNECTED:
+    				Log.d(TAG, "Handler SipUtilities.CALL_CONNECTED");
+    				tViewCallState.setText("Call Underway");
+    				declineButton.setVisibility(View.INVISIBLE);
+    				sipUtil.stateCall = StateCall.CALL_CONNECTED;
+    				break;
+    			case SipUtilities.RINGING_OUTGOING:
+    				Log.d(TAG, "Handler SipUtilities.RINGING_OUTGOING");
+    				tViewCallState.setText("Calling...");
+    				utilityButton.setText("End Call");
+    				sipUtil.stateCall = StateCall.RINGING_OUTGOING;
+    				break;
+    			case SipUtilities.RINGING_INCOMING:
+    				Log.d(TAG, "Handler SipUtilities.RINGING_INCOMING");
+    				tViewCallState.setText("Ringing...");
+    				utilityButton.setText("Answer");
+    				declineButton.setVisibility(View.VISIBLE);
+    				sipUtil.stateCall = StateCall.RINGING_INCOMING;
+    				break;
+    			default:
+    				Log.d(TAG, "Reached default statement");
+    				break;
+    			}
     		}
     	}
     };

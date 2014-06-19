@@ -2,7 +2,6 @@ package com.example.siptester;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.sip.SipSession;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -136,6 +135,7 @@ public class DailActivity extends ActionBarActivity {
     		}
     		//Switch statement for SIP Registration status
     		if (stateCode < 20){
+    			Log.d(TAG, "Statecode < 20");
 	    		switch (stateCode) {
 	    		case SipUtilities.SIP_REGISTERING:
 	    			Log.d(TAG, "Handler SipUtilities.SIP_REGISTERING");
@@ -156,6 +156,7 @@ public class DailActivity extends ActionBarActivity {
 	    			break;
 	    		}
     		} else if (stateCode < 30) {
+    			Log.d(TAG, "stateCode < 30");
     			switch (stateCode){
     			case SipUtilities.IDLE:
     				Log.d(TAG, "Handler SipUtilities.IDLE");
@@ -167,6 +168,7 @@ public class DailActivity extends ActionBarActivity {
     			case SipUtilities.CALL_CONNECTED:
     				Log.d(TAG, "Handler SipUtilities.CALL_CONNECTED");
     				tViewCallState.setText("Call Underway");
+    				utilityButton.setText("End Call");
     				declineButton.setVisibility(View.INVISIBLE);
     				sipUtil.stateCall = StateCall.CALL_CONNECTED;
     				break;
@@ -183,8 +185,12 @@ public class DailActivity extends ActionBarActivity {
     				declineButton.setVisibility(View.VISIBLE);
     				sipUtil.stateCall = StateCall.RINGING_INCOMING;
     				break;
+    			case SipUtilities.BUSY:
+    				Log.d(TAG, "Handler SipUtilities.BUSY");
+    				Toast.makeText(DailActivity.this, "Called number is busy", Toast.LENGTH_LONG).show();
     			default:
     				Log.d(TAG, "Reached default statement");
+    				Toast.makeText(DailActivity.this, "Error occured", Toast.LENGTH_LONG).show();
     				break;
     			}
     		}
@@ -196,27 +202,39 @@ public class DailActivity extends ActionBarActivity {
     	EditText contactField = (EditText)this.findViewById(R.id.editText1);
     	String contactNum = contactField.getText().toString();
     	if (sipUtil != null) {
-	    	if (!contactNum.equals("")) {
-	    		//Check if SIP is ready to place a call
-	    		if (sipUtil.call == null || sipUtil.call.getState() == SipSession.State.READY_TO_CALL ) {
-	    			Log.d(TAG, "Contact Number..." + contactNum + "...");
-	    			sipUtil.makeCall(contactNum);
-	    		}
-	    		//If there is an incoming call, answer it
-	    		else if (sipUtil.call.getState() == SipSession.State.INCOMING_CALL) {
-	    			sipUtil.call.setListener(sipUtil.listener);
-	    			sipUtil.answer();
-	    		}
-	    		//If a call is already established, answer it
-	    		else if (sipUtil.call.getState() == SipSession.State.IN_CALL){
-	    			sipUtil.endCall();
-	    		}
-	    	} else {
-	    		Toast.makeText(this, "No contact number entered", Toast.LENGTH_LONG).show();
-	    	}
+    		//Check if SIP is ready to place a call
+    		Log.d(TAG, "Call status: " + sipUtil.stateCall.toString());
+    		switch (sipUtil.stateCall) {
+    		case UNINIT_STATE:
+    		case IDLE:
+    			if (!contactNum.equals("")) {
+    				Log.d(TAG, "UtilButton making call");
+    				sipUtil.makeCall(contactNum);
+    			} else {
+    	    		Toast.makeText(this, "No contact number entered", Toast.LENGTH_LONG).show();
+    			}
+    			break;
+    		case RINGING_OUTGOING:
+    		case CALL_CONNECTED:
+    			Log.d(TAG, "UtilityButton hanging up");
+    			sipUtil.endCall();
+    			break;
+    		case RINGING_INCOMING:
+    			Log.d(TAG, "UtilityButton answering");
+    			sipUtil.answer();
+    			break;
+    		default:
+    			Log.d(TAG, "Default statement reached");
+    			break;
+    		}
 		} else {
     		Toast.makeText(this, "No SIP account registered yet", Toast.LENGTH_LONG).show();
     	}
+    }
+    
+    public void declineCall (View v) {
+    	Log.d(TAG, "declineButton ends call");
+    	sipUtil.endCall();
     }
     
     public void setupAccount (View v) {

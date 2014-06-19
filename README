@@ -1,0 +1,11 @@
+README
+
+The current view is set by the obtainMessage and sendToTarget located in 1) IncomingCallReceiver 2) SipAudioCallLis 3) SipUtilities.SipRegistrationListener
+
+When the message is then received in DailActivity Handler, the view is appropriately set and the current mode of the call/sip registration is set
+
+The buttons on the DailActivity screen only call methods that answer/end sipcalls, but the views are changed as soon as those methods cause
+the listeners to respond to fired events
+
+To send each message to DailActivity, static ints as declared in SipUtilities are used
+Each int is associated with a state, except for the ERROR and BUSY messages, which simply shows a Toast

@@ -57,14 +57,15 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 		Log.d(TAG, "Entering try clause");
 		try {
 			//Handle the state change when the incoming call is received
-			dailAct.mHandler.obtainMessage(dailAct.sipUtil.RINGING_INCOMING);
+			Message m = dailAct.mHandler.obtainMessage(dailAct.sipUtil.RINGING_INCOMING);
+			m.sendToTarget();
 			//Change the utilityButton to say "Answer"
 			Log.d(TAG, "Create listener object");
 			SipAudioCall.Listener listener = dailAct.sipUtil.listener;
 			//Make a local object when answering the call
 			Log.d(TAG, "Make an instance of the incoming call");
 			//Note: TakeAudioCall does not answer the call
-			incomingCall = dailAct.sipUtil.mSipManager.takeAudioCall(intent, listener);	
+			incomingCall = dailAct.sipUtil.mSipManager.takeAudioCall(intent, new SipAudioCallListener(dailAct));	
 			//Makes the phone ring
 			dailAct.sipUtil.ringTone.play();
 			//Gives the call to sipUtil so that it can be answered from there

@@ -71,6 +71,7 @@
         android:layout_below="@+id/button1"
         android:layout_centerHorizontal="true"
         android:visibility="invisible"
+        android:onClick="declineCall"
         android:text="Decline" />
 
 </RelativeLayout>

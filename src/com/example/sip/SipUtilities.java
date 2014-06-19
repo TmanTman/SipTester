@@ -37,6 +37,8 @@ public class SipUtilities {
 	public static final int IDLE = 22;
 	public static final int RINGING_INCOMING = 23; 
 	public static final int RINGING_OUTGOING = 24;
+	public static final int BUSY = 25;
+	public static final int ERROR = 26;
 	
 	//SIP state
 	public StateSip stateSip = StateSip.UNINIT_STATE;
@@ -106,7 +108,7 @@ public class SipUtilities {
 		//Make a listener from my own SipAudioCallListener class
         listener = new SipAudioCallListener(this.dailAct);
 		try {
-			Log.d(TAG, "Making call");
+			Log.d(TAG, "Making call to: " + pContact);
 			call = mSipManager.makeAudioCall(mSipProfile.getUriString(), pContact, listener, 30);
 		} catch (Exception e){
 			Log.d(TAG, "Error: " + e.toString());
@@ -114,6 +116,8 @@ public class SipUtilities {
 	}
 	
 	public void endCall(){
+		if (this.ringTone.isPlaying())
+			ringTone.stop();
 		try{
 			Log.d(TAG, "Ending call");
 			call.endCall();
@@ -166,84 +170,6 @@ public class SipUtilities {
         	m.sendToTarget();
         }
         
-    }
-	
-	class SipAudioCallListener extends SipAudioCall.Listener {
-		
-		DailActivity dailAct;
-		
-		public SipAudioCallListener(DailActivity cntx){
-			this.dailAct = cntx;
-		}
-        
-    	@Override
-        public void onCallEstablished(SipAudioCall call) {
-            Log.d(TAG, "onCallEstablished listener");
-            call.startAudio();
-            call.setSpeakerMode(true);
-            if (call.isMuted())
-            {
-            	Log.d(TAG, "Call was muted");
-            	call.toggleMute();
-            }
-            //Change utilButton to say "End Call"
-            Message m = dailAct.mHandler.obtainMessage(SipUtilities.CALL_CONNECTED);
-        	m.sendToTarget();
-        }
-    	
-    	@Override
-        public void onCallEnded(SipAudioCall call) {
-            Log.d(TAG, "onCallEnded Listener");
-            Message m = dailAct.mHandler.obtainMessage(SipUtilities.IDLE);
-        	m.sendToTarget();
-        }
-    	
-    	@Override
-    	public void onReadyToCall (SipAudioCall call) {
-    		Log.d(TAG, "onReadyToCall Listener");
-    	}
-    	
-    	@Override
-    	public void onRinging (SipAudioCall call, SipProfile caller){
-    		Log.d(TAG, "onRinging Listener");
-    	}
-    	
-    	@Override
-    	public void onCalling (SipAudioCall call) {
-    		Log.d(TAG, "onCalling Listener");
-    		Message m = dailAct.mHandler.obtainMessage(SipUtilities.RINGING_OUTGOING);
-        	m.sendToTarget();
-    	}
-    	
-    	@Override
-    	public void onCallBusy (SipAudioCall call){
-    		Log.d(TAG, "onCallBusy Listener");
-    		Toast.makeText(dailAct, "Number busy", Toast.LENGTH_LONG).show();
-    		Message m = dailAct.mHandler.obtainMessage(SipUtilities.IDLE);
-        	m.sendToTarget();
-    	}
-    	
-    	@Override
-    	public void onError (SipAudioCall call, int errorCode, String errorMessage){
-    		Log.d(TAG, "onError Listener: " + errorMessage + " code: " + errorCode);
-    		if (errorCode == -5){
-    			//Other user declined the call
-    			Toast.makeText(dailAct, "Number busy", Toast.LENGTH_LONG).show();
-        		Message m = dailAct.mHandler.obtainMessage(SipUtilities.IDLE);
-            	m.sendToTarget();
-    		}
-    	}
-    	
-    	@Override
-    	public void onRingingBack (SipAudioCall call){
-    		Log.d(TAG, "onRingingBack listener");
-    	}
-    	
-    	@Override
-    	public void onChanged (SipAudioCall call){
-    		Log.d(TAG, "onChanged Listener");
-    	}
-    	
     }
 	
 }

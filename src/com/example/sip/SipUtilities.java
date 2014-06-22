@@ -79,8 +79,6 @@ public class SipUtilities {
 				}
 				//Set the SIP password
 				builder.setPassword(pPassword);
-				//builder.setAuthUserName("piet");
-				//builder.setOutboundProxy("10.110.28.228");
 				builder.setPort(5060);
 				builder.setProtocol("UDP");
 				this.mSipProfile=builder.build();

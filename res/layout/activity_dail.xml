@@ -34,7 +34,7 @@
         android:layout_centerHorizontal="true"
         android:ems="10"
         android:inputType="textEmailAddress" 
-        android:text="koos@10.110.28.228"
+        android:text=""
         android:hint="Contact">
 
     </EditText>

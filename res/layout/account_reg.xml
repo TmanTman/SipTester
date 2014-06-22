@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView1"
         android:inputType="text"
-        android:text="piet"
+        android:text=""
         android:ems="10" />
     
     <TextView
@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/textView3"
-        android:text="10.110.28.228"
+        android:text=""
         android:ems="10" />
     
     <TextView
@@ -50,7 +50,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/editText3"
         android:layout_marginTop="30dp"
-        android:text="SPCE password" />
+        android:text="Password" />
     
     <EditText
         android:id="@+id/editText2"
@@ -59,7 +59,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/textView2"
         android:inputType="text"
-        android:text="sippassword"
+        android:text=""
         android:ems="10" />
 
     <Button
